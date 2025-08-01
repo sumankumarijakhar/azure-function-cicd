@@ -1,0 +1,49 @@
+trigger:
+- main
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: Build
+    displayName: 'Build Azure Function'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.x'
+    - script: |
+        dotnet restore
+        dotnet build --configuration Release
+      displayName: 'Restore and Build'
+
+- stage: Test
+  displayName: 'Test Stage'
+  dependsOn: Build
+  jobs:
+  - job: Test
+    displayName: 'Run Tests'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - script: |
+        echo "Pretend unit tests passed (no actual tests in this demo)"
+      displayName: 'Mock Tests'
+
+- stage: Deploy
+  displayName: 'Deploy to Azure'
+  dependsOn: Test
+  jobs:
+  - job: Deploy
+    displayName: 'Deploy Azure Function'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: AzureFunctionApp@1
+      inputs:
+        azureSubscription: 'AzureServiceConnectionName'
+        appType: 'functionApp'
+        appName: 'my-suman-funcapp'
+        package: '$(System.DefaultWorkingDirectory)/**/bin/Release/net6.0/publish'
