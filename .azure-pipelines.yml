@@ -24,26 +24,24 @@ stages:
   dependsOn: Build
   jobs:
   - job: Test
-    displayName: 'Run Tests'
+    displayName: 'Run Unit Tests'
     pool:
       vmImage: 'windows-latest'
     steps:
     - script: |
-        echo "Pretend unit tests passed (no actual tests in this demo)"
-      displayName: 'Mock Tests'
+        echo "Pretend unit tests ran"
+      displayName: 'Fake Test Step'
 
 - stage: Deploy
-  displayName: 'Deploy to Azure'
+  displayName: 'Deploy Stage (Mock)'
   dependsOn: Test
   jobs:
   - job: Deploy
-    displayName: 'Deploy Azure Function'
+    displayName: 'Simulate Azure Deployment'
     pool:
       vmImage: 'windows-latest'
     steps:
-    - task: AzureFunctionApp@1
-      inputs:
-        azureSubscription: 'AzureServiceConnectionName'
-        appType: 'functionApp'
-        appName: 'my-suman-funcapp'
-        package: '$(System.DefaultWorkingDirectory)/**/bin/Release/net6.0/publish'
+    - script: |
+        echo "Deploying to Azure Function App..."
+        echo "But real deployment skipped due to lack of access"
+      displayName: 'Fake Deploy'
