@@ -1,0 +1,47 @@
+trigger:
+- main
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: Build
+    displayName: 'Build Azure Function'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.x'
+    - script: |
+        dotnet restore
+        dotnet build --configuration Release
+      displayName: 'Restore and Build'
+
+- stage: Test
+  displayName: 'Test Stage'
+  dependsOn: Build
+  jobs:
+  - job: Test
+    displayName: 'Run Unit Tests'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - script: |
+        echo "Pretend unit tests ran"
+      displayName: 'Fake Test Step'
+
+- stage: Deploy
+  displayName: 'Deploy Stage (Mock)'
+  dependsOn: Test
+  jobs:
+  - job: Deploy
+    displayName: 'Simulate Azure Deployment'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - script: |
+        echo "Deploying to Azure Function App..."
+        echo "But real deployment skipped due to lack of access"
+      displayName: 'Fake Deploy'
